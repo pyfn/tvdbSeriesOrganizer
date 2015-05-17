@@ -47,6 +47,8 @@ def getSeries(name='',id='',language='en',format='xml'):
 	for attr in result.series.findAll():
 		if str(attr.name) == 'id':
 			series['seriesid'] = attr.text
+		elif str(attr.name) == 'seriesid':
+			continue
 		else:
 			series[str(attr.name)] = attr.text
 	for ep in result.findAll('episode'):
@@ -54,6 +56,8 @@ def getSeries(name='',id='',language='en',format='xml'):
 		for attr in ep.findAll():
 			if str(attr.name) == 'id':
 				series['episodeid'] = attr.text
+			elif str(attr.name) == 'overview':
+				series['episodeoverview'] = attr.text
 			else:
 				series[str(attr.name)] = attr.text
 		episodes.append(episode)
@@ -79,4 +83,3 @@ def getActors(name='',id=''):
 				series[str(attr.name)] = attr.text
 		actors.append(actor)
 	return actors
-		
