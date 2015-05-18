@@ -2,17 +2,20 @@ import APIManager as API
 import DBManager as DB
 
 
-def newSeries(name, pathDict):
+def newSeries(name, pathDict, epFlag=0):
 	"""
 	newSeries(String)
 	
 	downloads the series info and stores it to the DB.
 	"""
-	seriesWhole = API.getSeries(name)
+	seriesWhole = API.getSeries(name=name)
 	series = seriesWhole['series']
 	episodes = seriesWhole['episodes']
-	newGenre(series)
-	newActors(series)
+	if not epFlag:
+		newGenre(series)
+		newActors(series)
+		newBanners('banner', series)
+		DB.storeData('series', series)
 	for episode in episodes:
 		for ep in pathDict:
 			if (ep['season'] == episode['seasonnumber'] and
@@ -20,9 +23,9 @@ def newSeries(name, pathDict):
 				episode['path'] = ep['path']
 		else:
 			episode['path'] = 'NULL'
-		_storeEpisode(episode)
-	newBanners('banner', series)
-	DB.storeData('series', series)
+		if episode['path'] != 'NULL' or not epFlag:
+			_storeEpisode(episode)
+
 	
 def newGenre(series):
 	genres = series['genres'].strip('|').split('|')
@@ -50,5 +53,6 @@ def newBanners(args, dictionary):
 		,filedata)
 	dictionary[args] = path
 	
-def newEpisode(args):
-	pass
+def newEpisode(episodes):
+	for ser in episodes:
+		newSeries(ser,episodes[ser],1)

@@ -90,3 +90,15 @@ def storeBanner(name, filedata):
 	with open(os_join(_PIC_PATH,name), 'w') as pic:
 		pic.write(filedata)
 	return os_join(_PIC_PATH,name)
+	
+	
+def executeSelectQuery(query):
+	try:
+		db = sqlite3.connect()
+		c = db.cursor()
+		result = c.execute(query).fetchall()
+	except sqlite3.DatabaseError as e:
+		print(str(e))
+	finally:
+		db.close()
+	return result
